@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RserveParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">rserve-jackson-format</a> &gt; <a href="index.source.html" class="el_package">us.levk.jackson.rserve</a> &gt; <span class="el_source">RserveParser.java</span></div><h1>RserveParser.java</h1><pre class="source lang-java linenums">/*
+ * The MIT License (MIT)
+ * Copyright (c) 2017 lev.v.kuznetsov@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the &quot;Software&quot;), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+package us.levk.jackson.rserve;
+
+import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
+import static us.levk.jackson.rserve.ParserState.parse;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.protocol.REXPFactory;
+
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.base.ParserBase;
+import com.fasterxml.jackson.core.io.IOContext;
+
+/**
+ * Rserve protocol parser
+ * 
+ * @author levk
+ */
+public class RserveParser extends ParserBase {
+
+  /**
+   * Codec
+   */
+  private ObjectCodec _codec;
+  /**
+   * Parser states
+   */
+  private final Iterator &lt;ParserState &lt;?&gt;&gt; states;
+  /**
+   * Current token
+   */
+  private ParserState &lt;?&gt; current;
+
+  /**
+   * @param ctxt
+   * @param features
+   * @throws REXPMismatchException
+   */
+  public RserveParser (IOContext t, int f, ObjectCodec c, byte[] b, int o) throws REXPMismatchException {
+<span class="fc" id="L68">    super (t, f);</span>
+<span class="fc" id="L69">    setCodec (c);</span>
+<span class="fc" id="L70">    REXPFactory v = new REXPFactory ();</span>
+<span class="fc" id="L71">    v.parseREXP (b, o);</span>
+<span class="fc" id="L72">    states = parse (v.getREXP ()).iterator ();</span>
+<span class="fc" id="L73">  }</span>
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserBase#_closeInput()
+   */
+  @Override
+<span class="fc" id="L81">  protected void _closeInput () throws IOException {}</span>
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserMinimalBase#nextToken()
+   */
+  @Override
+  public JsonToken nextToken () throws IOException {
+<span class="fc" id="L90">    JsonToken r = _currToken = (current = states.next ()).type;</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    if (r == FIELD_NAME) _parsingContext.setCurrentName ((String) current.body);</span>
+<span class="fc" id="L92">    return r;</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserMinimalBase#getText()
+   */
+  @Override
+  public String getText () throws IOException {
+<span class="fc" id="L102">    return (String) current.body;</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserMinimalBase#getTextCharacters()
+   */
+  @Override
+  public char[] getTextCharacters () throws IOException {
+<span class="nc" id="L112">    return getText ().toCharArray ();</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserMinimalBase#getTextLength()
+   */
+  @Override
+  public int getTextLength () throws IOException {
+<span class="nc" id="L122">    return getText ().length ();</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserMinimalBase#getTextOffset()
+   */
+  @Override
+  public int getTextOffset () throws IOException {
+<span class="nc" id="L132">    return 0;</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.JsonParser#getCodec()
+   */
+  @Override
+  public ObjectCodec getCodec () {
+<span class="nc" id="L142">    return _codec;</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * com.fasterxml.jackson.core.JsonParser#setCodec(com.fasterxml.jackson.core.
+   * ObjectCodec)
+   */
+  @Override
+  public void setCodec (ObjectCodec c) {
+<span class="fc" id="L154">    _codec = c;</span>
+<span class="fc" id="L155">  }</span>
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserBase#getIntValue()
+   */
+  @Override
+  public int getIntValue () throws IOException {
+<span class="fc" id="L164">    return ((Number) current.body).intValue ();</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.base.ParserBase#getDoubleValue()
+   */
+  @Override
+  public double getDoubleValue () throws IOException {
+<span class="fc" id="L174">    return ((Number) current.body).doubleValue ();</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.core.JsonParser#getBooleanValue()
+   */
+  @Override
+  public boolean getBooleanValue () throws IOException {
+<span class="nc" id="L184">    return (Boolean) current.body;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

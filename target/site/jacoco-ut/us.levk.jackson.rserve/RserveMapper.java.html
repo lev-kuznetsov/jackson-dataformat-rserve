@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RserveMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">rserve-jackson-format</a> &gt; <a href="index.source.html" class="el_package">us.levk.jackson.rserve</a> &gt; <span class="el_source">RserveMapper.java</span></div><h1>RserveMapper.java</h1><pre class="source lang-java linenums">/*
+ * The MIT License (MIT)
+ * Copyright (c) 2017 lev.v.kuznetsov@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the &quot;Software&quot;), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+package us.levk.jackson.rserve;
+
+import com.fasterxml.jackson.core.FormatSchema;
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
+import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
+
+/**
+ * Rserve protocol mapper
+ * 
+ * @author levk
+ */
+public class RserveMapper extends ObjectMapper {
+
+  /**
+   * Serialization
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Default constructor
+   */
+  public RserveMapper () {
+<span class="fc" id="L55">    this (new RserveFactory ());</span>
+<span class="fc" id="L56">  }</span>
+
+  /**
+   * @param f
+   *          factory
+   */
+  public RserveMapper (RserveFactory f) {
+<span class="fc" id="L63">    super (f);</span>
+<span class="fc" id="L64">  }</span>
+
+  /**
+   * @param f
+   * @param p
+   * @param c
+   */
+  public RserveMapper (RserveFactory f, DefaultSerializerProvider p, DefaultDeserializationContext c) {
+<span class="nc" id="L72">    super (f, p, c);</span>
+<span class="nc" id="L73">  }</span>
+
+  /**
+   * Copy constructor
+   * 
+   * @param s
+   */
+  public RserveMapper (RserveMapper s) {
+<span class="nc" id="L81">    super (s);</span>
+<span class="nc" id="L82">  }</span>
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.databind.ObjectMapper#copy()
+   */
+  @Override
+  public ObjectMapper copy () {
+<span class="nc" id="L91">    return new RserveMapper (this);</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.databind.ObjectMapper#_newWriter(com.fasterxml.
+   * jackson.databind.SerializationConfig,
+   * com.fasterxml.jackson.databind.JavaType,
+   * com.fasterxml.jackson.core.PrettyPrinter)
+   */
+  @Override
+  protected RserveWriter _newWriter (SerializationConfig config, JavaType rootType, PrettyPrinter pp) {
+<span class="fc" id="L104">    return new RserveWriter (this, config, rootType, pp);</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.databind.ObjectMapper#writerFor(java.lang.Class)
+   */
+  @Override
+  public RserveWriter writerFor (Class &lt;?&gt; rootType) {
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">    return _newWriter (getSerializationConfig (), ((rootType == null) ? null : _typeFactory.constructType (rootType)),</span>
+                       /* PrettyPrinter */null);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * com.fasterxml.jackson.databind.ObjectMapper#writerFor(com.fasterxml.jackson
+   * .databind.JavaType)
+   */
+  @Override
+  public RserveWriter writerFor (JavaType rootType) {
+<span class="nc" id="L127">    return _newWriter (getSerializationConfig (), rootType, /* PrettyPrinter */null);</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * com.fasterxml.jackson.databind.ObjectMapper#writerFor(com.fasterxml.jackson
+   * .core.type.TypeReference)
+   */
+  @Override
+  public RserveWriter writerFor (TypeReference &lt;?&gt; rootType) {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">    return _newWriter (getSerializationConfig (), ((rootType == null) ? null : _typeFactory.constructType (rootType)),</span>
+                       /* PrettyPrinter */null);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.databind.ObjectMapper#_newReader(com.fasterxml.
+   * jackson.databind.DeserializationConfig,
+   * com.fasterxml.jackson.databind.JavaType, java.lang.Object,
+   * com.fasterxml.jackson.core.FormatSchema,
+   * com.fasterxml.jackson.databind.InjectableValues)
+   */
+  @Override
+  protected RserveReader _newReader (DeserializationConfig config, JavaType valueType, Object valueToUpdate,
+                                     FormatSchema schema, InjectableValues injectableValues) {
+<span class="fc" id="L155">    return new RserveReader (this, config, valueType, valueToUpdate, schema, injectableValues);</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.fasterxml.jackson.databind.ObjectMapper#readerFor(java.lang.Class)
+   */
+  @Override
+  public RserveReader readerFor (Class &lt;?&gt; type) {
+<span class="fc" id="L165">    return _newReader (getDeserializationConfig (), _typeFactory.constructType (type), null, null, _injectableValues);</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * com.fasterxml.jackson.databind.ObjectMapper#readerFor(com.fasterxml.jackson
+   * .databind.JavaType)
+   */
+  @Override
+  public RserveReader readerFor (JavaType type) {
+<span class="nc" id="L177">    return _newReader (getDeserializationConfig (), type, null, null, _injectableValues);</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * com.fasterxml.jackson.databind.ObjectMapper#readerFor(com.fasterxml.jackson
+   * .core.type.TypeReference)
+   */
+  @Override
+  public RserveReader readerFor (TypeReference &lt;?&gt; type) {
+<span class="nc" id="L189">    return _newReader (getDeserializationConfig (), _typeFactory.constructType (type), null, null, _injectableValues);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

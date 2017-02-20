@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParserState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">rserve-jackson-format</a> &gt; <a href="index.source.html" class="el_package">us.levk.jackson.rserve</a> &gt; <span class="el_source">ParserState.java</span></div><h1>ParserState.java</h1><pre class="source lang-java linenums">/*
+ * The MIT License (MIT)
+ * Copyright (c) 2017 lev.v.kuznetsov@gmail.com
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the &quot;Software&quot;), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+package us.levk.jackson.rserve;
+
+import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.END_OBJECT;
+import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
+import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
+import static com.fasterxml.jackson.core.JsonToken.START_OBJECT;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_FALSE;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NULL;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NUMBER_FLOAT;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_NUMBER_INT;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
+import static com.fasterxml.jackson.core.JsonToken.VALUE_TRUE;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
+import static java.util.stream.Stream.builder;
+import static java.util.stream.Stream.of;
+
+import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
+
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPDouble;
+import org.rosuda.REngine.REXPGenericVector;
+import org.rosuda.REngine.REXPInteger;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.RList;
+
+import com.fasterxml.jackson.core.JsonToken;
+
+/**
+ * Parser state
+ * 
+ * @author levk
+ */
+class ParserState &lt;T&gt; {
+
+  /**
+   * Token type
+   */
+  final JsonToken type;
+  /**
+   * Tokjen body
+   */
+  final T body;
+
+  /**
+   * @param t
+   *          token type
+   * @param b
+   *          body
+   */
+<span class="fc" id="L80">  private ParserState (JsonToken t, T b) {</span>
+<span class="fc" id="L81">    type = t;</span>
+<span class="fc" id="L82">    body = b;</span>
+<span class="fc" id="L83">  }</span>
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals (Object o) {
+<span class="pc bpc" id="L92" title="3 of 8 branches missed.">    return o instanceof ParserState &amp;&amp; ((ParserState &lt;?&gt;) o).type == type</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">           &amp;&amp; (((ParserState &lt;?&gt;) o).body == null ? (body == null) : ((ParserState &lt;?&gt;) o).body.equals (body));</span>
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode () {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">    return type.hashCode () ^ (body == null ? 0 : body.hashCode ());</span>
+  }
+
+  /**
+   * Null
+   */
+<span class="fc" id="L109">  static final ParserState &lt;Void&gt; NIL = new ParserState &lt;Void&gt; (VALUE_NULL, null);</span>
+  /**
+   * Array start
+   */
+<span class="fc" id="L113">  static final ParserState &lt;Void&gt; ARRAY_START = new ParserState &lt;Void&gt; (START_ARRAY, null);</span>
+  /**
+   * Object start
+   */
+<span class="fc" id="L117">  static final ParserState &lt;Void&gt; OBJECT_START = new ParserState &lt;Void&gt; (START_OBJECT, null);</span>
+  /**
+   * Array end
+   */
+<span class="fc" id="L121">  static final ParserState &lt;Void&gt; ARRAY_END = new ParserState &lt;Void&gt; (END_ARRAY, null);</span>
+  /**
+   * Object end
+   */
+<span class="fc" id="L125">  static final ParserState &lt;Void&gt; OBJECT_END = new ParserState &lt;Void&gt; (END_OBJECT, null);</span>
+  /**
+   * True
+   */
+<span class="fc" id="L129">  static final ParserState &lt;Boolean&gt; TRUE = new ParserState &lt;Boolean&gt; (VALUE_TRUE, true);</span>
+  /**
+   * False
+   */
+<span class="fc" id="L133">  static final ParserState &lt;Boolean&gt; FALSE = new ParserState &lt;Boolean&gt; (VALUE_FALSE, false);</span>
+
+  /**
+   * @param v
+   *          integer
+   * @return parser state
+   */
+  static ParserState &lt;Integer&gt; integer (int v) {
+<span class="fc" id="L141">    return new ParserState &lt;Integer&gt; (VALUE_NUMBER_INT, v);</span>
+  }
+
+  /**
+   * @param v
+   *          decimal
+   * @return parser state
+   */
+  static ParserState &lt;Double&gt; decimal (double v) {
+<span class="fc" id="L150">    return new ParserState &lt;Double&gt; (VALUE_NUMBER_FLOAT, v);</span>
+  }
+
+  /**
+   * @param v
+   *          string
+   * @return parser state
+   */
+  static ParserState &lt;String&gt; string (String v) {
+<span class="fc" id="L159">    return new ParserState &lt;String&gt; (VALUE_STRING, v);</span>
+  }
+
+  /**
+   * @param v
+   *          logical
+   * @return parser state
+   */
+  static ParserState &lt;Boolean&gt; logical (boolean v) {
+<span class="fc bfc" id="L168" title="All 2 branches covered.">    return v ? TRUE : FALSE;</span>
+  }
+
+  /**
+   * @param s
+   *          stream
+   * @return array boxed stream if there is more than one element
+   */
+  private static Stream &lt;ParserState &lt;?&gt;&gt; box (Stream &lt;ParserState &lt;?&gt;&gt; s) {
+<span class="fc" id="L177">    List &lt;ParserState &lt;?&gt;&gt; l = s.collect (toList ());</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">    if (l.size () &gt; 1) {</span>
+<span class="fc" id="L179">      l.add (0, ARRAY_START);</span>
+<span class="fc" id="L180">      l.add (ARRAY_END);</span>
+    }
+<span class="fc" id="L182">    return l.stream ();</span>
+  }
+
+  /**
+   * @param v
+   *          integer expression
+   * @return state stream
+   */
+  static Stream &lt;ParserState &lt;?&gt;&gt; integer (REXPInteger v) {
+<span class="fc" id="L191">    int[] i = v.asIntegers ();</span>
+<span class="fc" id="L192">    boolean[] n = v.isNA ();</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">    return box (range (0, i.length).mapToObj (c -&gt; n[c] ? NIL : integer (i[c])));</span>
+  }
+
+  /**
+   * @param v
+   *          decimal expression
+   * @return state stream
+   */
+  static Stream &lt;ParserState &lt;?&gt;&gt; decimal (REXPDouble v) {
+<span class="fc" id="L202">    double[] d = v.asDoubles ();</span>
+<span class="fc" id="L203">    boolean[] n = v.isNA ();</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">    return box (range (0, d.length).mapToObj (c -&gt; n[c] ? NIL : decimal (d[c])));</span>
+  }
+
+  /**
+   * @param v
+   *          string expression
+   * @return state stream
+   */
+  static Stream &lt;ParserState &lt;?&gt;&gt; string (REXPString v) {
+<span class="fc" id="L213">    String[] s = v.asStrings ();</span>
+<span class="fc" id="L214">    boolean[] n = v.isNA ();</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">    return box (range (0, s.length).mapToObj (c -&gt; n[c] ? NIL : string (s[c])));</span>
+  }
+
+  /**
+   * @param v
+   *          logical expression
+   * @return state stream
+   */
+  static Stream &lt;ParserState &lt;?&gt;&gt; logical (REXPLogical v) {
+<span class="fc" id="L224">    boolean[] b = v.isTRUE ();</span>
+<span class="fc" id="L225">    boolean[] n = v.isNA ();</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">    return box (range (0, b.length).mapToObj (c -&gt; n[c] ? NIL : logical (b[c])));</span>
+  }
+
+  /**
+   * @param n
+   *          name
+   * @return field name
+   */
+  static ParserState &lt;?&gt; field (String n) {
+<span class="fc" id="L235">    return new ParserState &lt;String&gt; (FIELD_NAME, n);</span>
+  }
+
+  /**
+   * @param v
+   *          list expression
+   * @return state stream
+   */
+  static Stream &lt;ParserState &lt;?&gt;&gt; list (REXPGenericVector v) {
+<span class="fc" id="L244">    RList l = v.asList ();</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">    if (l.isNamed ()) {</span>
+<span class="fc" id="L246">      Builder &lt;ParserState &lt;?&gt;&gt; s = builder ();</span>
+<span class="fc" id="L247">      return range (0, l.size ()).boxed ().reduce (s.add (OBJECT_START), (b, c) -&gt; {</span>
+<span class="fc" id="L248">        return parse (l.at (c)).reduce (b.add (field (l.keyAt (c))), (p, i) -&gt; {</span>
+<span class="fc" id="L249">          return p.add (i);</span>
+        }, (x, y) -&gt; {
+<span class="nc" id="L251">          throw new UnsupportedOperationException ();</span>
+        });
+      }, (x, y) -&gt; {
+<span class="nc" id="L254">        throw new UnsupportedOperationException ();</span>
+<span class="fc" id="L255">      }).add (OBJECT_END).build ();</span>
+<span class="fc" id="L256">    } else return of (of (ARRAY_START), range (0, l.size ()).mapToObj (c -&gt; parse (l.at (c))).flatMap (x -&gt; x),</span>
+<span class="fc" id="L257">                      of (ARRAY_END)).flatMap (x -&gt; x);</span>
+  }
+
+  /**
+   * @param v
+   *          expression
+   * @return state stream
+   */
+  static Stream &lt;ParserState &lt;?&gt;&gt; parse (REXP v) {
+<span class="fc bfc" id="L266" title="All 2 branches covered.">    if (v instanceof REXPInteger) return integer ((REXPInteger) v);</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">    else if (v instanceof REXPDouble) return decimal ((REXPDouble) v);</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">    else if (v instanceof REXPString) return string ((REXPString) v);</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">    else if (v instanceof REXPLogical) return logical ((REXPLogical) v);</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">    else if (v instanceof REXPGenericVector) return list ((REXPGenericVector) v);</span>
+<span class="nc" id="L271">    else throw new IllegalArgumentException (&quot;Cannot process REXP of type &quot; + v.getClass ().getSimpleName () + &quot;: &quot;</span>
+<span class="nc" id="L272">                                             + v.toDebugString ());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
