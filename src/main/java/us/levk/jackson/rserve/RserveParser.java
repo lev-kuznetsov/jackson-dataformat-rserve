@@ -60,8 +60,11 @@ public class RserveParser extends ParserBase {
   private ParserState <?> current;
 
   /**
-   * @param ctxt
-   * @param features
+   * @param t
+   * @param f
+   * @param c
+   * @param b
+   * @param o
    * @throws REXPMismatchException
    */
   public RserveParser (IOContext t, int f, ObjectCodec c, byte[] b, int o) throws REXPMismatchException {

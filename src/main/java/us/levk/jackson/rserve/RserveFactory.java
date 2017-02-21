@@ -51,66 +51,6 @@ public class RserveFactory extends JsonFactory {
    */
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Output stream wrapping writer
-   * 
-   * Purpose of this is to unwrap the underlying output stream; Rserve is a
-   * binary protocol and encoding makes no sense
-   * 
-   * @author levk
-   */
-  private static class WrappingWriter extends Writer {
-    /**
-     * Target
-     */
-    final OutputStream o;
-    /**
-     * Encoding
-     */
-    final String e;
-
-    /**
-     * @param a
-     *          output
-     * @param i
-     *          encoding
-     */
-    public WrappingWriter (OutputStream a, String i) {
-      o = a;
-      e = i;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.io.Writer#write(char[], int, int)
-     */
-    @Override
-    public void write (char[] b, int a, int s) throws IOException {
-      o.write (new String (b, a, s).getBytes (e));
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.io.Writer#flush()
-     */
-    @Override
-    public void flush () throws IOException {
-      o.flush ();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.io.Writer#close()
-     */
-    @Override
-    public void close () throws IOException {
-      o.close ();
-    }
-  }
-
   /*
    * (non-Javadoc)
    * 
@@ -182,7 +122,7 @@ public class RserveFactory extends JsonFactory {
    */
   @Override
   protected JsonGenerator _createGenerator (Writer o, IOContext ctxt) throws IOException {
-    return new RserveGenerator (_generatorFeatures, _objectCodec, ((WrappingWriter) o).o);
+    throw new UnsupportedOperationException ();
   }
 
   /*
@@ -195,7 +135,7 @@ public class RserveFactory extends JsonFactory {
    */
   @Override
   protected Writer _createWriter (OutputStream o, JsonEncoding e, IOContext ctxt) throws IOException {
-    return new WrappingWriter (o, e.getJavaName ());
+    throw new UnsupportedOperationException ();
   }
 
   /*
