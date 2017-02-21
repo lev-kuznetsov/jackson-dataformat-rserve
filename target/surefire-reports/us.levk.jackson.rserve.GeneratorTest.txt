@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: us.levk.jackson.rserve.GeneratorTest
--------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 sec - in us.levk.jackson.rserve.GeneratorTest
