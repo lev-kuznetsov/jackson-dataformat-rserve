@@ -8,4 +8,4 @@ hs_err_pid*
 .project
 target/
 .settings/
-/bin/
+bin/
