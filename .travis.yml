@@ -11,6 +11,8 @@ before_install:
 - "docker pull levkuznetsov/rserve"
 - "docker run -d -p 6311:6311 levkuznetsov/rserve"
 - "docker ps -a"
+- "netstat -ltpn"
+- "env | grep DOCKER"
 
 script:
 - mvn verify
