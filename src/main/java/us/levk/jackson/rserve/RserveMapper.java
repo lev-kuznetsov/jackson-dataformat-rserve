@@ -65,8 +65,11 @@ public class RserveMapper extends ObjectMapper {
 
   /**
    * @param f
+   *          factory
    * @param p
+   *          provider
    * @param c
+   *          context
    */
   public RserveMapper (RserveFactory f, DefaultSerializerProvider p, DefaultDeserializationContext c) {
     super (f, p, c);
@@ -76,6 +79,7 @@ public class RserveMapper extends ObjectMapper {
    * Copy constructor
    * 
    * @param s
+   *          source mapper
    */
   public RserveMapper (RserveMapper s) {
     super (s);

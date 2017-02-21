@@ -49,17 +49,22 @@ public class RserveWriter extends ObjectWriter {
   private static final long serialVersionUID = 1L;
 
   /**
-   * @param mapper
-   * @param config
-   * @param rootType
-   * @param pp
+   * @param m
+   *          mapper
+   * @param c
+   *          config
+   * @param t
+   *          rootType
+   * @param p
+   *          pp
    */
-  protected RserveWriter (ObjectMapper mapper, SerializationConfig config, JavaType rootType, PrettyPrinter pp) {
-    super (mapper, config, rootType, pp);
+  protected RserveWriter (ObjectMapper m, SerializationConfig c, JavaType t, PrettyPrinter p) {
+    super (m, c, t, p);
   }
 
   /**
    * @param v
+   *          value
    * @return r expression
    * @throws JsonProcessingException
    * @throws REXPMismatchException

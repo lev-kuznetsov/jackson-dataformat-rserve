@@ -51,16 +51,22 @@ public class RserveReader extends ObjectReader {
   private static final long serialVersionUID = 1L;
 
   /**
-   * @param mapper
-   * @param config
-   * @param valueType
-   * @param valueToUpdate
-   * @param schema
-   * @param injectableValues
+   * @param m
+   *          mapper
+   * @param c
+   *          config
+   * @param t
+   *          valueType
+   * @param u
+   *          valueToUpdate
+   * @param s
+   *          schema
+   * @param i
+   *          injectableValues
    */
-  public RserveReader (ObjectMapper mapper, DeserializationConfig config, JavaType valueType, Object valueToUpdate,
-                       FormatSchema schema, InjectableValues injectableValues) {
-    super (mapper, config, valueType, valueToUpdate, schema, injectableValues);
+  public RserveReader (ObjectMapper m, DeserializationConfig c, JavaType t, Object u, FormatSchema s,
+                       InjectableValues i) {
+    super (m, c, t, u, s, i);
   }
 
   /**
@@ -68,7 +74,9 @@ public class RserveReader extends ObjectReader {
    *          expression
    * @return value
    * @throws REXPMismatchException
+   *           on malformed expression
    * @throws IOException
+   *           if unable to map
    */
   public <T> T mapExpression (REXP e) throws REXPMismatchException, IOException {
     REXPFactory f = new REXPFactory (e);

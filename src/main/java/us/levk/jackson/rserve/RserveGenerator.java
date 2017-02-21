@@ -86,22 +86,31 @@ public class RserveGenerator extends GeneratorBase {
   private final Stack <Frame> stack = new Stack <> ();
 
   /**
-   * @param features
-   * @param codec
+   * @param f
+   *          features
+   * @param c
+   *          codec
+   * @param o
+   *          output
    */
-  public RserveGenerator (int features, ObjectCodec codec, OutputStream out) {
-    super (features, codec);
-    this.out = out;
+  public RserveGenerator (int f, ObjectCodec c, OutputStream o) {
+    super (f, c);
+    out = o;
   }
 
   /**
-   * @param features
-   * @param codec
-   * @param ctxt
+   * @param f
+   *          features
+   * @param c
+   *          codec
+   * @param t
+   *          ctxt
+   * @param o
+   *          output
    */
-  protected RserveGenerator (int features, ObjectCodec codec, JsonWriteContext ctxt, OutputStream out) {
-    super (features, codec, ctxt);
-    this.out = out;
+  protected RserveGenerator (int f, ObjectCodec c, JsonWriteContext t, OutputStream o) {
+    super (f, c, t);
+    out = o;
   }
 
   /*
@@ -136,6 +145,7 @@ public class RserveGenerator extends GeneratorBase {
    * @param e
    *          expression to write
    * @throws IOException
+   *           on binary representation failure or IO failure from stream
    */
   private void writeRexp (REXP e) throws IOException {
     if (!stack.isEmpty ()) stack.peek ().values.add (e);

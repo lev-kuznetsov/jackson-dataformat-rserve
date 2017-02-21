@@ -46,6 +46,7 @@ import com.fasterxml.jackson.core.io.IOContext;
  * @author levk
  */
 public class RserveFactory extends JsonFactory {
+
   /**
    * Serialization
    */

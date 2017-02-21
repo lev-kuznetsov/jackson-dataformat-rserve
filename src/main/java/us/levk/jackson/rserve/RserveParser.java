@@ -61,11 +61,17 @@ public class RserveParser extends ParserBase {
 
   /**
    * @param t
+   *          context
    * @param f
+   *          features
    * @param c
+   *          codec
    * @param b
+   *          input buffer
    * @param o
+   *          offset
    * @throws REXPMismatchException
+   *           on failure to parse buffer
    */
   public RserveParser (IOContext t, int f, ObjectCodec c, byte[] b, int o) throws REXPMismatchException {
     super (t, f);
