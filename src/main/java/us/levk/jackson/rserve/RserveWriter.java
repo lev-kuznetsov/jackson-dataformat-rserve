@@ -67,7 +67,9 @@ public class RserveWriter extends ObjectWriter {
    *          value
    * @return r expression
    * @throws JsonProcessingException
+   *           on databind failure
    * @throws REXPMismatchException
+   *           on serialization vailure
    */
   public REXP mapValue (Object v) throws JsonProcessingException, REXPMismatchException {
     REXPFactory q = new REXPFactory ();

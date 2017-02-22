@@ -13,7 +13,7 @@ before_install:
 - "docker ps -a"
 
 script:
-- mvn verify
+- mvn verify -P it
 
 after_success:
   - mvn coveralls:report

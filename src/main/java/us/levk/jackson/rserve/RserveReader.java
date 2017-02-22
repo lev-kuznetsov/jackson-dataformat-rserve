@@ -72,6 +72,8 @@ public class RserveReader extends ObjectReader {
   /**
    * @param e
    *          expression
+   * @param <T>
+   *          target type
    * @return value
    * @throws REXPMismatchException
    *           on malformed expression
