@@ -56,14 +56,4 @@ public class DatabindTest {
     f.parseREXP (m.writeValueAsBytes ("foo"), 0);
     assertThat (((REXPString) f.getREXP ()).asString (), is ("foo"));
   }
-
-  @Test
-  public void mapExpressionStringFoo () throws Exception {
-    assertThat (m.readerFor (String.class).mapExpression (new REXPString ("foo")), is ("foo"));
-  }
-
-  @Test
-  public void mapValueStringFoo () throws Exception {
-    assertThat (m.writerFor (String.class).mapValue ("foo").asString (), is ("foo"));
-  }
 }
