@@ -4,4 +4,4 @@
 
 Rserve protocol plugin to leverage Jackson databinding
 
-Check out [integration test](src/test/java/us/levk/jackson/rserve/E2e.java) for an example
+Check out [integration test](src/test/java/us/levk/jackson/rserve/E2e.java) for an example use with Rserve's own client
