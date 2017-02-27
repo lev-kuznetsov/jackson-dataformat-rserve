@@ -50,6 +50,7 @@ import org.rosuda.REngine.REXPDouble;
 import org.rosuda.REngine.REXPGenericVector;
 import org.rosuda.REngine.REXPInteger;
 import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPNull;
 import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.RList;
 
@@ -263,7 +264,8 @@ class ParserState <T> {
    * @return state stream
    */
   static Stream <ParserState <?>> parse (REXP v) {
-    if (v instanceof REXPInteger) return integer ((REXPInteger) v);
+    if (v instanceof REXPNull) return of (NIL);
+    else if (v instanceof REXPInteger) return integer ((REXPInteger) v);
     else if (v instanceof REXPDouble) return decimal ((REXPDouble) v);
     else if (v instanceof REXPString) return string ((REXPString) v);
     else if (v instanceof REXPLogical) return logical ((REXPLogical) v);
